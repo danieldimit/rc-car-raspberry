@@ -8,7 +8,9 @@ GPIO.setwarnings(False)
 server_socket = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
 
 port = 1
+print "port init"
 server_socket.bind(("", port))
+print "binded"
 server_socket.listen(1)
 print "listening on port %d" % port
 
