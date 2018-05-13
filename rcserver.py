@@ -15,10 +15,16 @@ r = 'going: '
 GPIO.setmode(GPIO.BOARD)
 
 # set up GPIO pins
-GPIO.setup(7, GPIO.OUT) #Connected to PWMA
+GPIO.setup(7, GPIO.OUT) #Forward
+GPIO.setup(11, GPIO.OUT) #Backward
+GPIO.setup(12, GPIO.OUT) #Left
+GPIO.setup(13, GPIO.OUT) #Right
 
 #Make sure the rest are disabled
 GPIO.output(7,GPIO.HIGH)
+GPIO.output(11,GPIO.HIGH)
+GPIO.output(12,GPIO.HIGH)
+GPIO.output(13,GPIO.HIGH)
 
 #Bluetooth
 server_sock=BluetoothSocket( RFCOMM )
@@ -26,29 +32,31 @@ server_sock=BluetoothSocket( RFCOMM )
 #GPIO directions
 def forward():
     #Set the direction of Motor A
-    GPIO.output(7, GPIO.LOW) #Set AIN1
+    GPIO.output(11,GPIO.HIGH) # Stop backward
+    GPIO.output(7, GPIO.LOW) # Go forward
     
 def backward():
     #Set the direction of Motor A
-    GPIO.output(12, GPIO.LOW) #Set AIN1
-    GPIO.output(11, GPIO.HIGH) #Set AIN2
+    GPIO.output(7, GPIO.HIGH) #Stop forward
+    GPIO.output(11, GPIO.LOW) #Go backward
  
 def right():
     #Set the direction of Motor B
-    GPIO.output(15, GPIO.HIGH) #Set BIN1
-    GPIO.output(16, GPIO.LOW) #Set BIN2
+    GPIO.output(12,GPIO.HIGH)
+    GPIO.output(13,GPIO.LOW)
 
 def left():
     #Set the direction of Motor B
-    GPIO.output(15, GPIO.LOW) #Set BIN1
-    GPIO.output(16, GPIO.HIGH) #Set BIN2
+    GPIO.output(13,GPIO.HIGH)
+    GPIO.output(12,GPIO.LOW)
     
 def still_f_b():
-    GPIO.output(7, GPIO.HIGH) #Set PWMA
-
+    GPIO.output(11,GPIO.HIGH) # Stop backward
+    GPIO.output(7, GPIO.HIGH) # Stop forward
     
 def still_l_r():
-    print("nothing happens")
+    GPIO.output(12,GPIO.HIGH)
+    GPIO.output(13,GPIO.HIGH)
 #end of direction functions
     
 server_sock.bind(("",PORT_ANY))
