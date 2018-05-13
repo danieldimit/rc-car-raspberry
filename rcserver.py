@@ -48,6 +48,7 @@ def still_f_b():
 
     
 def still_l_r():
+    GPIO.output(7, GPIO.HIGH) #Set PWMA
 #end of direction functions
     
 server_sock.bind(("",PORT_ANY))
