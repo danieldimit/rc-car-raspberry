@@ -48,7 +48,7 @@ def still_f_b():
 
     
 def still_l_r():
-    GPIO.output(7, GPIO.HIGH) #Set PWMA
+    print("nothing happens")
 #end of direction functions
     
 server_sock.bind(("",PORT_ANY))
@@ -113,7 +113,6 @@ try:
             print('Setting GPIOs to LOW')
             still_f_b()
             still_l_r()
-            GPIO.output(13, GPIO.LOW) #Set STBY
             print('Disconnecting')
             client_sock.close()
             server_sock.close()
