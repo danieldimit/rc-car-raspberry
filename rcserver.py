@@ -26,7 +26,7 @@ server_sock=BluetoothSocket( RFCOMM )
 #GPIO directions
 def forward():
     #Set the direction of Motor A
-    GPIO.output(7, GPIO.HIGH) #Set AIN1
+    GPIO.output(7, GPIO.LOW) #Set AIN1
     
 def backward():
     #Set the direction of Motor A
