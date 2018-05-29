@@ -75,58 +75,57 @@ while True:
     client_sock, client_info = server_sock.accept()
     print("Accepted connection from ", client_info)
 
-    #try:
-    while True:
-        data = client_sock.recv(1024)
-        if data == 'S':
-            print('%s [Still]' % r)
-            still_f_b()
-            still_l_r()
-        elif data == 'F':
-            print('%s [Forward]' % r)
-            forward()
-            still_l_r()
-        elif data == 'B':
-            print('%s [Backward]' % r)
-            backward()
-            still_l_r()
-        elif data == 'L':
-            print('%s [Left]' % r)
-            still_f_b()
-            left()
-        elif data == 'R':
-            print('%s [Right]' % r)
-            still_f_b()
-            right()
-        elif data == 'FL':
-            print('%s [Forward Left]' % r)
-            forward()
-            left()
-        elif data == 'FR':
-            print('%s [Forward Right]' % r)
-            forward()
-            right()
-        elif data == 'BL':
-            print('%s [Backward Left]' % r)
-            backward()
-            left()
-        elif data == 'BR':
-            print('%s [Backward Right]' % r)
-            backward()
-            right()
-        elif data == 'SD':
-            print('Setting GPIOs to LOW')
-            still_f_b()
-            still_l_r()
-            print('Disconnecting')
-            client_sock.close()
-            server_sock.close()
-            print('Shutting down')
-            os.system('halt')
-        
-    #except IOError:
-    #    print('Disconnecting')
-    #    client_sock.close()
-     #   server_sock.close()
-      #  pass
-#
+    try:
+        while True:
+            data = client_sock.recv(1024)
+            if data == 'S':
+                print('%s [Still]' % r)
+                still_f_b()
+                still_l_r()
+            elif data == 'F':
+                print('%s [Forward]' % r)
+                forward()
+                still_l_r()
+            elif data == 'B':
+                print('%s [Backward]' % r)
+                backward()
+                still_l_r()
+            elif data == 'L':
+                print('%s [Left]' % r)
+                still_f_b()
+                left()
+            elif data == 'R':
+                print('%s [Right]' % r)
+                still_f_b()
+                right()
+            elif data == 'FL':
+                print('%s [Forward Left]' % r)
+                forward()
+                left()
+            elif data == 'FR':
+                print('%s [Forward Right]' % r)
+                forward()
+                right()
+            elif data == 'BL':
+                print('%s [Backward Left]' % r)
+                backward()
+                left()
+            elif data == 'BR':
+                print('%s [Backward Right]' % r)
+                backward()
+                right()
+            elif data == 'SD':
+                print('Setting GPIOs to LOW')
+                still_f_b()
+                still_l_r()
+                print('Disconnecting')
+                client_sock.close()
+                server_sock.close()
+                print('Shutting down')
+                os.system('halt')
+            
+    except IOError:
+        print('Disconnecting')
+        client_sock.close()
+        server_sock.close()
+        pass
