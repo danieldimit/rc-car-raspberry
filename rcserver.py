@@ -129,4 +129,6 @@ while True:
                 os.system('halt')
             
     except IOError:
+        client_sock.close()
+        server_sock.close()
         pass
