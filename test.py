@@ -15,8 +15,8 @@ GPIO.setup(13, GPIO.OUT) #Right
 
 #Make sure the rest are disabled
 GPIO.output(7,GPIO.HIGH)
-GPIO.output(11,GPIO.LOW)
-GPIO.output(12,GPIO.LOW)
+GPIO.output(11,GPIO.HIGH)
+GPIO.output(12,GPIO.HIGH)
 GPIO.output(13,GPIO.LOW)
 
 while True:
