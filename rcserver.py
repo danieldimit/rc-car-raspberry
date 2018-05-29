@@ -26,8 +26,7 @@ GPIO.output(11,GPIO.HIGH)
 GPIO.output(12,GPIO.HIGH)
 GPIO.output(13,GPIO.HIGH)
 
-#Bluetooth
-server_sock=BluetoothSocket( RFCOMM )
+
 
 #GPIO directions
 def forward():
@@ -58,17 +57,19 @@ def still_l_r():
     GPIO.output(12,GPIO.HIGH)
     GPIO.output(13,GPIO.HIGH)
 #end of direction functions
-    
-server_sock.bind(("",PORT_ANY))
-server_sock.listen(1)
 
-port = server_sock.getsockname()[1]
 
-uuid = "94f39d29-7d6d-437d-973b-fba39e49d4ee"
+while True:
+    #Bluetooth
+    server_sock=BluetoothSocket( RFCOMM )
+    server_sock.bind(("",PORT_ANY))
+    server_sock.listen(1)
 
-advertise_service(server_sock, "SampleServer", service_id = uuid, service_classes = [ uuid, SERIAL_PORT_CLASS ], profiles = [ SERIAL_PORT_PROFILE ])
+    port = server_sock.getsockname()[1]
 
-while True:         
+    uuid = "94f39d29-7d6d-437d-973b-fba39e49d4ee"
+
+    advertise_service(server_sock, "SampleServer", service_id = uuid, service_classes = [ uuid, SERIAL_PORT_CLASS ], profiles = [ SERIAL_PORT_PROFILE ])       
     print("Waiting for phone to engage connection %d" % port)
 
     client_sock, client_info = server_sock.accept()
