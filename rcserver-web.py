@@ -105,9 +105,9 @@ try:
 	        os.system('halt')
 	    
 except IOError:
-print('Disconnecting')
-client_sock.close()
-server_sock.close()
-pass
+	print('Disconnecting')
+	client_sock.close()
+	server_sock.close()
+	pass
     
 
