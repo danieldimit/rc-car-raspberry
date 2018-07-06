@@ -69,14 +69,16 @@ prev_input = not input
 def worker(ser_sock):
     # Listener for the button changed event
     try:
-        print "TEST ___"
         GPIO.wait_for_edge(15, GPIO.FALLING)  
+        print "TRIGGERED BUTTON"
         ser_sock.close()
     except KeyboardInterrupt:  
         GPIO.cleanup()
     return
 
 while True:
+
+    print("loop")
 
     #if the last reading was low and this one high, print
     if ((not prev_input) and input):
@@ -103,6 +105,7 @@ while True:
             print("Accepted connection from ", client_info)
 
     else:
+        print("else")
         # Everything is setup so just get the command and drive the car
         try:
             while True:
