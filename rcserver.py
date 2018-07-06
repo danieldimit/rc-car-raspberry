@@ -1,8 +1,6 @@
-# file: rfcomm-server.py
-# auth: Albert Huang <albert@csail.mit.edu>
-# desc: simple demonstration of a server application that uses RFCOMM sockets
-#
-# $Id: rfcomm-server.py 518 2007-08-10 07:20:07Z albert $
+# file: rcserver.py
+# auth: Daniel Dimitrov <daniel.dimitrov@campus.tu-berlin.de>
+# desc: Program that can connect to a customly build android app via Bluetooth and to a custom controlling server via Internet
 
 import RPi.GPIO as GPIO
 import time
