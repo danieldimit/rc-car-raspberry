@@ -69,8 +69,12 @@ prev_input = not input
 def worker(ser_sock):
     # Listener for the button changed event
     try:
-        GPIO.wait_for_edge(15, GPIO.FALLING)  
+        
+        GPIO.wait_for_edge(15, GPIO.FALLING) 
         print "TRIGGERED BUTTON"
+        print(">>>>>>>>>>>> Waiting for phone to engage connection %d" % port)
+        #BluetoothSocket.accept() is a blocking call
+        client_sock, client_info = ser_sock.accept()
         ser_sock.close()
     except KeyboardInterrupt:  
         GPIO.cleanup()
@@ -115,7 +119,7 @@ while True:
                 if (prev_input != input):
                     print("WIll leave inner loop")
                     break
-                    
+
                 data = client_sock.recv(1024) if input else urllib2.urlopen("http://165.227.144.106:8080/getDirection").read()
                 if data == 'S':
                     print('%s [Still]' % r)
