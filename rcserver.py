@@ -97,7 +97,7 @@ while True:
             print("Waiting for phone to engage connection %d" % port)
 
             #Thread Bluetooth.accept()-killer
-            t = threading.Thread(target=worker, args=(server_sock))
+            t = threading.Thread(target=worker, args=(server_sock,))
             t.start()
 
             #BluetoothSocket.accept() is a blocking call
