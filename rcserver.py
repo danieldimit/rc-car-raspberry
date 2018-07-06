@@ -157,6 +157,7 @@ while True:
                     print('Shutting down')
                     os.system('halt')
                 elif (prev_input != input):
+                    print("WIll leave inner loop")
                     break
 
                 #update previous input
