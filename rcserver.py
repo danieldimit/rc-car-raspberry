@@ -96,7 +96,7 @@ while True:
             advertise_service(server_sock, "SampleServer", service_id = uuid, service_classes = [ uuid, SERIAL_PORT_CLASS ], profiles = [ SERIAL_PORT_PROFILE ])       
             print("Waiting for phone to engage connection %d" % port)
 
-            #Thread killer
+            #Thread Bluetooth.accept()-killer
             t = threading.Thread(target=worker, args=(server_sock))
             t.start()
 
