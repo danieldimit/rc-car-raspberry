@@ -109,7 +109,13 @@ while True:
         # Everything is setup so just get the command and drive the car
         try:
             while True:
+                #update previous input
+                prev_input = input
                 input = GPIO.input(15)
+                if (prev_input != input):
+                    print("WIll leave inner loop")
+                    break
+                    
                 data = client_sock.recv(1024) if input else urllib2.urlopen("http://165.227.144.106:8080/getDirection").read()
                 if data == 'S':
                     print('%s [Still]' % r)
@@ -156,12 +162,6 @@ while True:
                     server_sock.close()
                     print('Shutting down')
                     os.system('halt')
-                elif (prev_input != input):
-                    print("WIll leave inner loop")
-                    break
-
-                #update previous input
-                prev_input = input
         except IOError:
             print('Disconnecting')
             client_sock.close()
