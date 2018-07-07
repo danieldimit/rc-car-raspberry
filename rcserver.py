@@ -112,8 +112,6 @@ def decide_direction(data):
 def bluetooth_worker():
     # Listener for the button changed event
     try:
-        
-        GPIO.wait_for_edge(15, GPIO.RISING) 
         while True:
 
             print("loop bluetooth")
@@ -140,6 +138,7 @@ def bluetooth_worker():
                         #update previous input
                         input = GPIO.input(15)
                         if (not input):
+                            time.sleep(0.01)
                             GPIO.wait_for_edge(15, GPIO.RISING) 
                         data = client_sock.recv(1024)
                         decide_direction(data)
@@ -155,7 +154,6 @@ def bluetooth_worker():
 def wifi_worker():
     # Listener for the button changed event
     try:
-        GPIO.wait_for_edge(15, GPIO.FALLING) 
         while True:
 
             print("loop wifi")
@@ -163,6 +161,7 @@ def wifi_worker():
             input = GPIO.input(15)
 
             if (input):
+                time.sleep(0.01)
                 GPIO.wait_for_edge(15, GPIO.FALLING)
 
             data = urllib2.urlopen("http://165.227.144.106:8080/getDirection").read()
