@@ -153,7 +153,9 @@ def wifi_worker():
         while True:
             print("loop wifi")
             data = urllib2.urlopen("http://165.227.144.106:8080/getDirection").read()
-            decide_direction(data)
+            if (prev_data != data):
+                decide_direction(data)
+            prev_data = data
     except KeyboardInterrupt:  
         GPIO.cleanup()
     return
