@@ -61,118 +61,140 @@ def still_l_r():
     GPIO.output(13,GPIO.HIGH)
 #end of direction functions
 
-#take a switch reading
-input = GPIO.input(15)
-prev_input = not input
+def decide_direction(data):
+    if data == 'S':
+        print('%s [Still]' % r)
+        still_f_b()
+        still_l_r()
+    elif data == 'F':
+        print('%s [Forward]' % r)
+        forward()
+        still_l_r()
+    elif data == 'B':
+        print('%s [Backward]' % r)
+        backward()
+        still_l_r()
+    elif data == 'L':
+        print('%s [Left]' % r)
+        still_f_b()
+        left()
+    elif data == 'R':
+        print('%s [Right]' % r)
+        still_f_b()
+        right()
+    elif data == 'FL':
+        print('%s [Forward Left]' % r)
+        forward()
+        left()
+    elif data == 'FR':
+        print('%s [Forward Right]' % r)
+        forward()
+        right()
+    elif data == 'BL':
+        print('%s [Backward Left]' % r)
+        backward()
+        left()
+    elif data == 'BR':
+        print('%s [Backward Right]' % r)
+        backward()
+        right()
+    elif data == 'SD':
+        print('Setting GPIOs to LOW')
+        still_f_b()
+        still_l_r()
+        print('Disconnecting')
+        client_sock.close()
+        server_sock.close()
+        print('Shutting down')
+        os.system('halt')
 
-#Thread that would close the BluetoothSocket.accept() in order to cause IOException and stop the blocking call
-def worker(ser_sock):
+#Bluetooth control thread
+def bluetooth_worker():
     # Listener for the button changed event
     try:
         
-        GPIO.wait_for_edge(15, GPIO.FALLING) 
-        print "TRIGGERED BUTTON"
-        print(">>>>>>>>>>>> Waiting for phone to engage connection %d" % port)
-        #BluetoothSocket.accept() is a blocking call
-        client_sock, client_info = ser_sock.accept()
-        ser_sock.close()
+        GPIO.wait_for_edge(15, GPIO.RISING) 
+        while True:
+
+            print("loop bluetooth")
+            input = GPIO.input(15)
+            if (input):
+                #Try to connect via Bluetooth
+                server_sock=BluetoothSocket( RFCOMM )
+                server_sock.bind(("",PORT_ANY))
+                server_sock.listen(1)
+
+                port = server_sock.getsockname()[1]
+
+                uuid = "94f39d29-7d6d-437d-973b-fba39e49d4ee"
+
+                advertise_service(server_sock, "SampleServer", service_id = uuid, service_classes = [ uuid, SERIAL_PORT_CLASS ], profiles = [ SERIAL_PORT_PROFILE ])       
+                print("Waiting for phone to engage connection %d" % port)
+
+                #BluetoothSocket.accept() is a blocking call
+                client_sock, client_info = server_sock.accept()
+                print("Accepted connection from ", client_info)
+                # Everything is setup so just get the command and drive the car
+                try:
+                    while True:
+                        #update previous input
+                        input = GPIO.input(15)
+                        if (not input):
+                            GPIO.wait_for_edge(15, GPIO.RISING) 
+                        data = client_sock.recv(1024)
+                        decide_direction(data)
+                except IOError:
+                    print('Disconnecting')
+                    client_sock.close()
+                    server_sock.close()
+                    pass
     except KeyboardInterrupt:  
         GPIO.cleanup()
     return
 
-while True:
+def wifi_worker():
+    # Listener for the button changed event
+    try:
+        GPIO.wait_for_edge(15, GPIO.FALLING) 
+        while True:
 
-    print("loop")
+            print("loop wifi")
+            #update previous input
+            input = GPIO.input(15)
 
-    #if the last reading was low and this one high, print
-    if ((not prev_input) and input):
-        print("Button pressed")
-        if (input):
-            #Try to connect via Bluetooth
-            server_sock=BluetoothSocket( RFCOMM )
-            server_sock.bind(("",PORT_ANY))
-            server_sock.listen(1)
+            if (input):
+                GPIO.wait_for_edge(15, GPIO.FALLING)
 
-            port = server_sock.getsockname()[1]
+            data = urllib2.urlopen("http://165.227.144.106:8080/getDirection").read()
+            decide_direction(data)
+    except KeyboardInterrupt:  
+        GPIO.cleanup()
+    return
 
-            uuid = "94f39d29-7d6d-437d-973b-fba39e49d4ee"
+#Start the bluetooth thread
+t = threading.Thread(target=bluetooth_worker)
+t.start()
 
-            advertise_service(server_sock, "SampleServer", service_id = uuid, service_classes = [ uuid, SERIAL_PORT_CLASS ], profiles = [ SERIAL_PORT_PROFILE ])       
-            print("Waiting for phone to engage connection %d" % port)
-
-            #Thread Bluetooth.accept()-killer
-            t = threading.Thread(target=worker, args=(server_sock,))
-            t.start()
-
-            #BluetoothSocket.accept() is a blocking call
-            client_sock, client_info = server_sock.accept()
-            print("Accepted connection from ", client_info)
-
-    else:
-        print("else")
-        # Everything is setup so just get the command and drive the car
-        try:
-            while True:
-                #update previous input
-                prev_input = input
-                input = GPIO.input(15)
-                if (prev_input != input):
-                    print("WIll leave inner loop")
-                    break
-
-                data = client_sock.recv(1024) if input else urllib2.urlopen("http://165.227.144.106:8080/getDirection").read()
-                if data == 'S':
-                    print('%s [Still]' % r)
-                    still_f_b()
-                    still_l_r()
-                elif data == 'F':
-                    print('%s [Forward]' % r)
-                    forward()
-                    still_l_r()
-                elif data == 'B':
-                    print('%s [Backward]' % r)
-                    backward()
-                    still_l_r()
-                elif data == 'L':
-                    print('%s [Left]' % r)
-                    still_f_b()
-                    left()
-                elif data == 'R':
-                    print('%s [Right]' % r)
-                    still_f_b()
-                    right()
-                elif data == 'FL':
-                    print('%s [Forward Left]' % r)
-                    forward()
-                    left()
-                elif data == 'FR':
-                    print('%s [Forward Right]' % r)
-                    forward()
-                    right()
-                elif data == 'BL':
-                    print('%s [Backward Left]' % r)
-                    backward()
-                    left()
-                elif data == 'BR':
-                    print('%s [Backward Right]' % r)
-                    backward()
-                    right()
-                elif data == 'SD':
-                    print('Setting GPIOs to LOW')
-                    still_f_b()
-                    still_l_r()
-                    print('Disconnecting')
-                    client_sock.close()
-                    server_sock.close()
-                    print('Shutting down')
-                    os.system('halt')
-        except IOError:
-            print('Disconnecting')
-            client_sock.close()
-            server_sock.close()
-            pass
-
-    
+#Start the wifi service in this thread
+wifi_worker()
     
 GPIO.cleanup()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
