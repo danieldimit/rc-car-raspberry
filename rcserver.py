@@ -110,6 +110,8 @@ def decide_direction(data):
 
 #Bluetooth control thread
 def bluetooth_worker():
+    toggle = 0;
+
     # Listener for the button changed event
     try:
         while True:
@@ -135,13 +137,15 @@ def bluetooth_worker():
                 # Everything is setup so just get the command and drive the car
                 try:
                     while True:
-                        #update previous input
-                        input = GPIO.input(15)
-                        if (not input):
+                        if (not toggle):
+                            data = client_sock.recv(1024)
+                            decide_direction(data)
+                        else:
                             time.sleep(0.01)
-                            GPIO.wait_for_edge(15, GPIO.RISING) 
-                        data = client_sock.recv(1024)
-                        decide_direction(data)
+                            GPIO.wait_for_edge(15, GPIO.FALLING)
+                            time.sleep(0.01)
+                            GPIO.wait_for_edge(15, GPIO.RISING)
+                            toggle = 0 if toggle == 1 else 1
                 except IOError:
                     print('Disconnecting')
                     client_sock.close()
@@ -152,20 +156,24 @@ def bluetooth_worker():
     return
 
 def wifi_worker():
+    toggle = 0;
+
     # Listener for the button changed event
     try:
         while True:
 
             print("loop wifi")
-            #update previous input
-            input = GPIO.input(15)
 
-            if (input):
+            if (toggle):
+                data = urllib2.urlopen("http://165.227.144.106:8080/getDirection").read()
+                decide_direction(data)
+            else:
                 time.sleep(0.01)
                 GPIO.wait_for_edge(15, GPIO.FALLING)
-
-            data = urllib2.urlopen("http://165.227.144.106:8080/getDirection").read()
-            decide_direction(data)
+                time.sleep(0.01)
+                GPIO.wait_for_edge(15, GPIO.RISING)
+                toggle = 0 if toggle == 1 else 1
+            
     except KeyboardInterrupt:  
         GPIO.cleanup()
     return
@@ -175,5 +183,4 @@ t_bt = threading.Thread(target=bluetooth_worker)
 t_bt.start()
 
 #Start the wifi service in this thread
-t_wifi = threading.Thread(target=wifi_worker)
-t_wifi.start()
+wifi_worker()
