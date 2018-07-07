@@ -14,12 +14,6 @@ r = 'going: '
 #Set up GPIOs
 GPIO.setmode(GPIO.BOARD)
 
-#Set up GPIO bluetooth-WiFi toggling
-GPIO.setup(15, GPIO.IN)
-input = GPIO.input(15)
-GPIO.cleanup()
-GPIO.setmode(GPIO.BOARD)
-
 # set up GPIO motor controlling pins
 GPIO.setup(7, GPIO.OUT) #Forward
 GPIO.setup(11, GPIO.OUT) #Backward
