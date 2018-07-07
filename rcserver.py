@@ -135,7 +135,7 @@ def bluetooth_worker():
             # Everything is setup so just get the command and drive the car
             try:
                 while True:
-                    if (not toggle):
+                    if (toggle == 0):
                         data = client_sock.recv(1024)
                         decide_direction(data)
                     else:
@@ -162,7 +162,7 @@ def wifi_worker():
 
             print("loop wifi")
 
-            if (toggle):
+            if (toggle == 1):
                 data = urllib2.urlopen("http://165.227.144.106:8080/getDirection").read()
                 decide_direction(data)
             else:
