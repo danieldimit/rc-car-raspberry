@@ -171,29 +171,9 @@ def wifi_worker():
     return
 
 #Start the bluetooth thread
-t = threading.Thread(target=bluetooth_worker)
+t_bt = threading.Thread(target=bluetooth_worker)
 t.start()
 
 #Start the wifi service in this thread
-wifi_worker()
-    
-GPIO.cleanup()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
+t_bt = threading.Thread(target=wifi_worker)
+t.start()
