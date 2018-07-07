@@ -147,7 +147,14 @@ def wifi_worker():
         prev_data = 'S'
         while True:
             print("loop wifi")
-            data = urllib2.urlopen("http://165.227.144.106:8080/getDirection").read()
+            try: 
+                data = urllib2.urlopen("http://165.227.144.106:8080/getDirection").read()
+            except urllib2.HTTPError, e:
+                data = 'S'
+                print e.code
+            except urllib2.URLError, e:
+                data = 'S'
+                print e.args
             if (prev_data != data):
                 decide_direction(data)
             prev_data = data
