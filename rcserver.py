@@ -172,8 +172,8 @@ def wifi_worker():
 
 #Start the bluetooth thread
 t_bt = threading.Thread(target=bluetooth_worker)
-t.start()
+t_bt.start()
 
 #Start the wifi service in this thread
-t_bt = threading.Thread(target=wifi_worker)
-t.start()
+t_wifi = threading.Thread(target=wifi_worker)
+t_wifi.start()
