@@ -150,6 +150,7 @@ def bluetooth_worker():
 def wifi_worker():
     # Listener for the button changed event
     try:
+        prev_data = 'S'
         while True:
             print("loop wifi")
             data = urllib2.urlopen("http://165.227.144.106:8080/getDirection").read()
