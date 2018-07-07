@@ -117,40 +117,38 @@ def bluetooth_worker():
         while True:
 
             print("loop bluetooth")
-            input = GPIO.input(15)
-            if (input):
-                #Try to connect via Bluetooth
-                server_sock=BluetoothSocket( RFCOMM )
-                server_sock.bind(("",PORT_ANY))
-                server_sock.listen(1)
+            #Try to connect via Bluetooth
+            server_sock=BluetoothSocket( RFCOMM )
+            server_sock.bind(("",PORT_ANY))
+            server_sock.listen(1)
 
-                port = server_sock.getsockname()[1]
+            port = server_sock.getsockname()[1]
 
-                uuid = "94f39d29-7d6d-437d-973b-fba39e49d4ee"
+            uuid = "94f39d29-7d6d-437d-973b-fba39e49d4ee"
 
-                advertise_service(server_sock, "SampleServer", service_id = uuid, service_classes = [ uuid, SERIAL_PORT_CLASS ], profiles = [ SERIAL_PORT_PROFILE ])       
-                print("Waiting for phone to engage connection %d" % port)
+            advertise_service(server_sock, "SampleServer", service_id = uuid, service_classes = [ uuid, SERIAL_PORT_CLASS ], profiles = [ SERIAL_PORT_PROFILE ])       
+            print("Waiting for phone to engage connection %d" % port)
 
-                #BluetoothSocket.accept() is a blocking call
-                client_sock, client_info = server_sock.accept()
-                print("Accepted connection from ", client_info)
-                # Everything is setup so just get the command and drive the car
-                try:
-                    while True:
-                        if (not toggle):
-                            data = client_sock.recv(1024)
-                            decide_direction(data)
-                        else:
-                            time.sleep(0.01)
-                            GPIO.wait_for_edge(15, GPIO.FALLING)
-                            time.sleep(0.01)
-                            GPIO.wait_for_edge(15, GPIO.RISING)
-                            toggle = 0 if toggle == 1 else 1
-                except IOError:
-                    print('Disconnecting')
-                    client_sock.close()
-                    server_sock.close()
-                    pass
+            #BluetoothSocket.accept() is a blocking call
+            client_sock, client_info = server_sock.accept()
+            print("Accepted connection from ", client_info)
+            # Everything is setup so just get the command and drive the car
+            try:
+                while True:
+                    if (not toggle):
+                        data = client_sock.recv(1024)
+                        decide_direction(data)
+                    else:
+                        time.sleep(0.01)
+                        GPIO.wait_for_edge(15, GPIO.FALLING)
+                        time.sleep(0.01)
+                        GPIO.wait_for_edge(15, GPIO.RISING)
+                        toggle = 0 if toggle == 1 else 1
+            except IOError:
+                print('Disconnecting')
+                client_sock.close()
+                server_sock.close()
+                pass
     except KeyboardInterrupt:  
         GPIO.cleanup()
     return
