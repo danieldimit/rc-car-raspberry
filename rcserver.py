@@ -168,8 +168,10 @@ def wifi_worker():
             else:
                 time.sleep(0.01)
                 GPIO.wait_for_edge(15, GPIO.FALLING)
+                print("PAST THIS")
                 time.sleep(0.01)
                 GPIO.wait_for_edge(15, GPIO.RISING)
+                print("PAST RISING")
                 toggle = 0 if toggle == 1 else 1
             
     except KeyboardInterrupt:  
