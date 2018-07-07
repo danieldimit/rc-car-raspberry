@@ -151,7 +151,6 @@ def wifi_worker():
     # Listener for the button changed event
     try:
         while True:
-
             print("loop wifi")
             data = urllib2.urlopen("http://165.227.144.106:8080/getDirection").read()
             decide_direction(data)
@@ -159,7 +158,10 @@ def wifi_worker():
         GPIO.cleanup()
     return
 
-if (input == 0):
-    wifi_worker()
-else:
-    bluetooth_worker()
+#Start the bluetooth thread
+t_bt = threading.Thread(target=bluetooth_worker)
+t_bt.start()
+
+#Start the bluetooth thread
+t_wifi = threading.Thread(target=wifi_worker)
+t_wifi.start()
